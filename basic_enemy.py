@@ -1,28 +1,29 @@
 import pygame
 from pygame.sprite import Sprite
 
-from math import sin, cos, tan, atan
-
 class BasicEnemy(Sprite):
-    def __init__(self, screen):
-        super().__init__
+    def __init__(self, screen, settings):
+        super().__init__()
 
         self.screen = screen
         self.screen_rect = screen.get_rect()
+        self.settings = settings
 
-        self.rect = pygame.Rect(self.screen_rect.left, self.screen_rect.top, 100, 100)
-        
+        self.rect = pygame.Rect(self.screen_rect.left, self.screen_rect.top, 32, 32)
         self.centerx = float(self.rect.centerx)
         self.centery = float(self.rect.centery)
 
-        self.move_speed = 0.3
+        self.move_speed = self.settings.basic_enemy_move_speed
 
     def update(self, player):
-        self.centerx += sin(atan(player.centery - self.centery)) / tan(atan(player.centery - self.centery)) * self.move_speed
-        self.centery += cos(atan(player.centery - self.centery)) * tan(atan(player.centery - self.centery)) * self.move_speed
+        if self.settings.world_flag:
+            hypoteneuse = ((player.centery - self.centery) ** 2 + (player.centerx - self.centerx) ** 2) ** 0.5
 
-        self.rect.centerx = self.centerx
-        self.rect.centery = self.centery
+            self.centerx += (player.centerx - self.centerx) * self.move_speed / hypoteneuse
+            self.centery += (player.centery - self.centery) * self.move_speed / hypoteneuse
+
+            self.rect.centerx = self.centerx
+            self.rect.centery = self.centery
     
     def draw_basic_enemy(self):
-        pygame.draw.rect(self.screen, (255, 0, 0), self.rect)
+        pygame.draw.rect(self.screen, (0, 0, 0), self.rect)

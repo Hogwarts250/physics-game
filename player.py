@@ -2,14 +2,17 @@ import pygame
 from pygame.sprite import Sprite
 
 class Player(Sprite):
-    def __init__(self, screen):
-        super().__init__
+    def __init__(self, screen, settings):
+        super().__init__()
 
         self.screen = screen
         self.screen_rect = screen.get_rect()
-        
-        self.rect = pygame.Rect(self.screen_rect.centerx, self.screen_rect.centery, 20, 20)
+        self.settings = settings
+        self.image = pygame.image.load("images/player.png")
 
+        self.rect = self.image.get_rect()
+        self.rect.centerx = self.screen_rect.centerx
+        self.rect.centery = self.screen_rect.centery
         self.centerx = float(self.rect.centerx)
         self.centery = float(self.rect.centery)
 
@@ -18,23 +21,24 @@ class Player(Sprite):
         self.moving_up = False
         self.moving_down = False
 
-        self.move_speed = 0.5
+        self.move_speed = self.settings.player_move_speed
 
     def update(self):
-        if self.moving_right and self.rect.right < self.screen_rect.right:
-            self.centerx += self.move_speed
+        if self.settings.world_flag:
+            if self.moving_right and self.rect.right < self.screen_rect.right:
+                self.centerx += self.move_speed
 
-        if self.moving_left and self.rect.left > 0:
-            self.centerx -= self.move_speed
+            if self.moving_left and self.rect.left > 0:
+                self.centerx -= self.move_speed
 
-        if self.moving_up and self.rect.top > 0:
-            self.centery -= self.move_speed
+            if self.moving_up and self.rect.top > 0:
+                self.centery -= self.move_speed
 
-        if self.moving_down and self.rect.bottom < self.screen_rect.bottom:
-            self.centery += self.move_speed
+            if self.moving_down and self.rect.bottom < self.screen_rect.bottom:
+                self.centery += self.move_speed
 
-        self.rect.centerx = self.centerx
-        self.rect.centery = self.centery
+            self.rect.centerx = self.centerx
+            self.rect.centery = self.centery
 
-    def draw_player(self):
-        pygame.draw.rect(self.screen, (255, 255, 255), self.rect)
+    def blitme(self):
+        self.screen.blit(self.image, self.rect)
