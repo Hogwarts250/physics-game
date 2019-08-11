@@ -16,14 +16,13 @@ class BasicEnemy(Sprite):
         self.move_speed = self.settings.basic_enemy_move_speed
 
     def update(self, player):
-        if self.settings.world_flag:
-            hypoteneuse = ((player.centery - self.centery) ** 2 + (player.centerx - self.centerx) ** 2) ** 0.5
+        hypoteneuse = ((player.centery - self.centery) ** 2 + (player.centerx - self.centerx) ** 2) ** 0.5
 
-            self.centerx += (player.centerx - self.centerx) * self.move_speed / hypoteneuse
-            self.centery += (player.centery - self.centery) * self.move_speed / hypoteneuse
+        self.centerx += (player.centerx - self.centerx) * self.move_speed / hypoteneuse
+        self.centery += (player.centery - self.centery) * self.move_speed / hypoteneuse
 
-            self.rect.centerx = self.centerx
-            self.rect.centery = self.centery
+        self.rect.centerx = self.centerx
+        self.rect.centery = self.centery
     
     def draw_basic_enemy(self):
         pygame.draw.rect(self.screen, (0, 0, 0), self.rect)

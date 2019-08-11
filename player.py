@@ -8,7 +8,7 @@ class Player(Sprite):
         self.screen = screen
         self.screen_rect = screen.get_rect()
         self.settings = settings
-        self.image = pygame.image.load("images/player.png")
+        self.image = pygame.image.load("C:/Users/felix/Documents/python_scripts/physics_game/images/player.png")
 
         self.rect = self.image.get_rect()
         self.rect.centerx = self.screen_rect.centerx
@@ -20,25 +20,32 @@ class Player(Sprite):
         self.moving_left = False
         self.moving_up = False
         self.moving_down = False
-
         self.move_speed = self.settings.player_move_speed
 
+        self.health = 10
+
+    def reset(self):
+        self.moving_right = False
+        self.moving_left = False
+        self.moving_up = False
+        self.moving_down = False
+
+
     def update(self):
-        if self.settings.world_flag:
-            if self.moving_right and self.rect.right < self.screen_rect.right:
-                self.centerx += self.move_speed
+        if self.moving_right and self.rect.right < self.screen_rect.right:
+            self.centerx += self.move_speed
 
-            if self.moving_left and self.rect.left > 0:
-                self.centerx -= self.move_speed
+        if self.moving_left and self.rect.left > 0:
+            self.centerx -= self.move_speed
 
-            if self.moving_up and self.rect.top > 0:
-                self.centery -= self.move_speed
+        if self.moving_up and self.rect.top > 0:
+            self.centery -= self.move_speed
 
-            if self.moving_down and self.rect.bottom < self.screen_rect.bottom:
-                self.centery += self.move_speed
+        if self.moving_down and self.rect.bottom < self.screen_rect.bottom:
+            self.centery += self.move_speed
 
-            self.rect.centerx = self.centerx
-            self.rect.centery = self.centery
+        self.rect.centerx = self.centerx
+        self.rect.centery = self.centery
 
     def blitme(self):
         self.screen.blit(self.image, self.rect)

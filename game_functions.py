@@ -1,11 +1,12 @@
 import pygame, sys
 
 from basic_enemy import BasicEnemy
+from button import Button
 from settings import Settings
 
 settings = Settings()
 
-def check_pygame_events(player, button, settings):
+def check_pygame_events(player, buttons, fight_enemy, settings):
     for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
@@ -20,7 +21,8 @@ def check_pygame_events(player, button, settings):
             elif settings.world_flag == False:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_x, mouse_y = pygame.mouse.get_pos()
-                    check_button_clicked(button, mouse_x, mouse_y)
+                    for button in buttons:
+                        button_clicked(button, fight_enemy, mouse_x, mouse_y, settings)
 
 def check_keydown_events(event, player):
     if event.key == pygame.K_RIGHT:
@@ -48,19 +50,22 @@ def check_keyup_events(event, player):
     elif event.key == pygame.K_DOWN:
         player.moving_down = False
 
-def check_button_clicked(button, mouse_x, mouse_y):
+def button_clicked(button, fight_enemy, mouse_x, mouse_y, settings):
     button_clicked = button.rect.collidepoint(mouse_x, mouse_y)
-    return button_clicked
+    if button_clicked and button.text == fight_enemy.answer:
+        settings.world_flag = True
 
 def update_sprites(player, basic_enemies, settings):
-    basic_enemies.update(player)
-    player.update()
+    if settings.world_flag:
+        basic_enemies.update(player)
+        player.update()
 
     if pygame.sprite.spritecollideany(player, basic_enemies):
         basic_enemies.remove(pygame.sprite.spritecollideany(player, basic_enemies))
+        player.reset()
         settings.world_flag = False
 
-def update_screen(player, basic_enemies, button, screen, settings):
+def update_screen(player, basic_enemies, fight_enemy, buttons, screen, settings):
     screen.fill((255, 255, 255))
 
     if settings.world_flag:
@@ -69,10 +74,26 @@ def update_screen(player, basic_enemies, button, screen, settings):
         player.blitme()
     
     elif settings.world_flag == False:
-        button.draw_button()
+        fight_enemy.draw_fight_enemy()
+
+        for button in buttons:
+            button.draw_button()
 
     pygame.display.flip()
 
+def create_fight_gui(number_buttons, buttons, screen, settings):
+    buttons_text = ["equation 1", "equation 2", "equation 3"]
+    i = 0
+
+    while i < number_buttons:
+        button = Button(buttons_text[i], screen)
+        button.rect.left = button.width * i + 20 * (i + 1)
+        button.rect.bottom = settings.screen_height - 20
+
+        buttons.append(button)
+
+        i += 1
+        
 def create_basic_enemies(screen, basic_enemies, settings):
     i = 0
     
