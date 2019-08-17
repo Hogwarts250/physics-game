@@ -1,19 +1,19 @@
 import pygame
 from pygame.sprite import Sprite
+from random import randint
 
 class BasicEnemy(Sprite):
     def __init__(self, screen, settings):
         super().__init__()
 
         self.screen = screen
-        self.screen_rect = screen.get_rect()
         self.settings = settings
 
-        self.rect = pygame.Rect(self.screen_rect.left, self.screen_rect.top, 32, 32)
+        self.rect = pygame.Rect(0, 0, 64, 64)
         self.centerx = float(self.rect.centerx)
         self.centery = float(self.rect.centery)
 
-        self.move_speed = self.settings.basic_enemy_move_speed
+        self.move_speed = self.settings.basic_enemy_move_speed + randint(0, 200) / 1000
 
     def update(self, player):
         hypoteneuse = ((player.centery - self.centery) ** 2 + (player.centerx - self.centerx) ** 2) ** 0.5
