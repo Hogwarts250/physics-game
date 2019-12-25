@@ -1,6 +1,8 @@
 import pygame
 
 class TextBox():
+    """ A class that renders text and creates border around it """
+
     def __init__(self, text, width, height, screen, settings):
         self.screen = screen
         self.settings = settings

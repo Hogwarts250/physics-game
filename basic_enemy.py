@@ -3,6 +3,8 @@ from pygame.sprite import Sprite
 from random import randint
 
 class BasicEnemy(Sprite):
+    """ A class that represents a single, simple enemy in the world """
+
     def __init__(self, screen, settings):
         super().__init__()
 
@@ -13,7 +15,7 @@ class BasicEnemy(Sprite):
         self.centerx = float(self.rect.centerx)
         self.centery = float(self.rect.centery)
 
-        self.move_speed = self.settings.basic_enemy_move_speed + randint(0, 200) / 1000
+        self.move_speed = self.settings.basic_enemy_move_speed + randint(0, 20) / 100
 
     def update(self, player):
         hypoteneuse = ((player.centery - self.centery) ** 2 + (player.centerx - self.centerx) ** 2) ** 0.5

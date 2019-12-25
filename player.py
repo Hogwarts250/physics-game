@@ -2,6 +2,8 @@ import pygame
 from pygame.sprite import Sprite
 
 class Player(Sprite):
+    """ A class that represents the user """
+
     def __init__(self, screen, settings):
         super().__init__()
 
@@ -13,7 +15,7 @@ class Player(Sprite):
 
         self.rect = self.image.get_rect()
         self.rect.centerx = self.screen_rect.centerx
-        self.rect.centery = self.screen_rect.centery
+        self.rect.bottom = self.screen_rect.bottom
         self.centerx = float(self.rect.centerx)
         self.centery = float(self.rect.centery)
 
@@ -24,12 +26,6 @@ class Player(Sprite):
         self.move_speed = self.settings.player_move_speed
 
         self.health = self.settings.player_health
-
-    def reset(self):
-        self.moving_right = False
-        self.moving_left = False
-        self.moving_up = False
-        self.moving_down = False
 
     def update(self):
         if self.moving_right and self.rect.right < self.screen_rect.right:
@@ -50,5 +46,10 @@ class Player(Sprite):
         self.image = pygame.image.load(self.settings.player_image)
 
     def blitme(self):
-        pygame.draw.rect(self.screen, (255, 0, 0), self.rect)
         self.screen.blit(self.image, self.rect)
+    
+    def reset(self):
+        self.moving_right = False
+        self.moving_left = False
+        self.moving_up = False
+        self.moving_down = False

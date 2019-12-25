@@ -1,6 +1,5 @@
 import sys, pygame
 from pygame.sprite import Group
-from _thread import start_new_thread
 
 import game_functions
 
@@ -18,8 +17,8 @@ screen_size = settings.screen_length, settings.screen_height
 screen = pygame.display.set_mode(screen_size)
 pygame.display.set_caption("Atom Land")
 
-levels = LevelDesign(settings)
 player = Player(screen, settings)
+levels = LevelDesign(settings)
 
 basic_enemies = Group()
 game_functions.create_basic_enemies(screen, basic_enemies, levels, settings)
@@ -28,9 +27,8 @@ buttons = []
 fight_enemies = Group()
 question_box = []
 
-animate = Animate(settings)
-
-animate.start()
+animate_player = Animate("images/player_walk_down/player_walk", settings)
+animate_player.start()
  
 while True:
     game_functions.check_pygame_events(player, basic_enemies, fight_enemies, buttons, question_box, levels, screen, settings)

@@ -1,21 +1,23 @@
 import pygame
 
 class Settings():
+    """ A class that stores all of the settings for the game """
+
     def __init__(self):
         self.screen_length = 1080
         self.screen_height = 720
 
         self.animation_speed = 0.15
         
-        self.exit_flag = False
+        self.game_over_flag = False
         self.world_flag = True
 
         self.padding = 20
         self.text_colour = (0, 0, 0)
-        self.font = pygame.font.SysFont(None, 30)
+        self.font = pygame.font.SysFont("Times New Roman", 24)
 
         self.player_move_speed = 0.7
-        self.player_health = 10
+        self.player_health = 4
         self.player_image = "images/player.png"
         self.image_locations = ["player_walk0.png", "player_walk1.png", "player_walk2.png", "player_walk3.png", "player_walk4.png", "player_walk5.png","player_walk6.png"]
 
@@ -29,5 +31,4 @@ class Settings():
     
     def reset(self):
         self.player_image = "images/player.png"
-        self.player_health = 10
         self.enemy_counter = 0

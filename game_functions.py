@@ -9,7 +9,7 @@ from settings import Settings
 def check_pygame_events(player, basic_enemies, fight_enemies, buttons, question_box, levels, screen, settings):
     for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                settings.exit_flag = True
+                settings.game_over_flag = True
                 sys.exit()
 
             if settings.world_flag:
@@ -19,7 +19,7 @@ def check_pygame_events(player, basic_enemies, fight_enemies, buttons, question_
                 elif event.type == pygame.KEYUP:
                     check_keyup_events(event, player)
             
-            elif settings.world_flag == False:
+            else:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_x, mouse_y = pygame.mouse.get_pos()
                     for button in buttons:
@@ -52,35 +52,48 @@ def check_keyup_events(event, player):
         player.moving_down = False
 
 def button_clicked(player, basic_enemies, button, buttons, fight_enemies, question_box, mouse_x, mouse_y, levels, screen, settings):
-    button_clicked = button.rect.collidepoint(mouse_x, mouse_y)
     for fight_enemy in fight_enemies:
         # Changes from fight scene to world stage
-        if button_clicked and button.text == fight_enemy.answer:
-            fight_enemies.empty()
-            question_box.clear()
-            buttons.clear()
-            settings.enemy_counter += 1
-
-            if not basic_enemies:
-                settings.level_tracker += 1
-                settings.reset()
-                player.rect.center = screen.get_rect().center
-                player.centerx, player.centery = settings.screen_length / 2, settings.screen_height / 2
+        if button.rect.collidepoint(mouse_x, mouse_y):
+            if button.text == fight_enemy.answer:
+                fight_enemies.empty()
+                question_box.clear()
+                buttons.clear()
+                settings.enemy_counter += 1
                 
-                create_basic_enemies(screen, basic_enemies, levels, settings)
+                # Moves to the next level if there are no enemies left.
+                if not basic_enemies:
+                    settings.level_tracker += 1
+                    settings.reset()
 
-            settings.world_flag = True
+                    reset_player(player, screen, settings)
+
+                    create_basic_enemies(screen, basic_enemies, levels, settings)
+
+                settings.world_flag = True
         
-        elif button_clicked and button.text != fight_enemy.answer:
-            fight_enemy.hint_trigger = True
+            else:
+                fight_enemy.hint_trigger = True
+                player.health -= 1
+
+                if player.health <= 0:
+                    settings.game_over_flag = True
+                    sys.exit()
+
+def reset_player(player, screen, settings):
+    if player.health == settings.player_health:
+        pass
+
+    else:
+        player.health += 1
+
+    player.rect.center = screen.get_rect().center
+    player.centerx, player.centery = settings.screen_length / 2, settings.screen_height / 2
 
 def update_sprites(player, basic_enemies, fight_enemies, buttons, question_box, screen, levels, settings):
     if settings.world_flag:
         basic_enemies.update(player)
         player.update()
-
-    elif settings.world_flag == False:
-        pass
 
     if pygame.sprite.spritecollideany(player, basic_enemies):
         # Changes from world stage to fight scene
@@ -98,7 +111,7 @@ def update_screen(player, basic_enemies, fight_enemies, buttons, question_box, s
 
         player.blitme()
     
-    elif settings.world_flag == False:
+    else:
         for fight_enemy in fight_enemies:
             fight_enemy.draw_fight_enemy()
 
@@ -135,21 +148,21 @@ def create_fight_gui(buttons, fight_enemies, question_box, screen, levels, setti
     level_text_options = levels.text_options[settings.level_tracker]
     text_options = level_text_options[settings.enemy_counter]
 
-    level_hints = levels.hints[settings.level_tracker]
-    hints = level_hints[settings.enemy_counter]
+    hint_options = levels.hints[settings.level_tracker]
+    hint = hint_options[settings.enemy_counter]
+
+    answer_options = levels.answers[settings.level_tracker]
+    answer = answer_options[settings.enemy_counter]
 
     i = 0
-
     while i < settings.number_buttons:
         create_button(buttons, text_options[i], (settings.screen_length - 80) / 3, settings.screen_height / 4, screen, settings)
 
         i += 1
     
     i = 0
-
     while i < settings.number_fight_enemies:
-        random_int = randint(0, len(text_options) - 1)
-        create_fight_enemy(fight_enemies, hints[random_int], text_options[random_int], screen, settings)
+        create_fight_enemy(fight_enemies, hint, answer, screen, settings)
         
         i += 1
 
@@ -164,8 +177,8 @@ def create_button(buttons, text, width, height, screen, settings):
     button.rect.bottom = settings.screen_height - settings.padding
     buttons.append(button)
 
-def create_fight_enemy(fight_enemies, hints, answer, screen, settings):
-    fight_enemy = FightEnemy(hints, answer, screen, settings)
+def create_fight_enemy(fight_enemies, hint, answer, screen, settings):
+    fight_enemy = FightEnemy(hint, answer, screen, settings)
     fight_enemy.rect.centerx = 0.7 * settings.screen_length
     fight_enemy.rect.centery = 0.5 * (0.75 * settings.screen_height - settings.padding)
 

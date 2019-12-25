@@ -2,6 +2,8 @@ import pygame
 from pygame.sprite import Sprite
 
 class FightEnemy(Sprite):
+    """ A class that represents a single enemy during combat """
+
     def __init__(self, hint, answer, screen, settings):
         super().__init__()
 
